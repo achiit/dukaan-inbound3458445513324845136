@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>कटिंग सलुन – समय बुक गर्नुहोस्</title>
+<meta name="description" content="कटिंग सलुनमा अनलाइन समय बुक गर्नुहोस्।">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✂️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Mukta:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3EBDD;--card:#FBF6EC;--ink:#2A2522;--red:#B3261E;--teal:#1F4E4A;--line:#D9CDB8;
+--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1F1B18;--card:#2A2521;--ink:#F3EBDD;--line:#4A423A;--red:#E0574E;--teal:#6FB3AB}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Mukta',sans-serif;font-size:18px;line-height:1.55;padding-top:var(--safe-t);padding-bottom:calc(90px + var(--safe-b))}
+.pole{height:14px;background:repeating-linear-gradient(135deg,var(--red) 0 14px,var(--bg) 14px 28px,var(--teal) 28px 42px,var(--bg) 42px 56px)}
+header{padding:28px 20px 8px;max-width:640px;margin:0 auto}
+h1{font-family:'Yatra One',serif;font-weight:400;font-size:2.1rem;line-height:1.2;margin:0 0 6px}
+header p{margin:0;opacity:.8}
+main{max-width:640px;margin:0 auto;padding:0 20px}
+section{margin-top:30px}
+h2{font-family:'Yatra One',serif;font-weight:400;font-size:1.3rem;margin:0 0 12px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;min-height:56px}
+.opt b{font-weight:700}
+.opt .p{color:var(--red);font-weight:700;white-space:nowrap}
+.opt[aria-pressed="true"]{border-color:var(--teal);background:var(--teal);color:#FBF6EC}
+.opt[aria-pressed="true"] .p{color:#FBF6EC}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer;min-height:48px}
+.chip[aria-pressed="true"]{border-color:var(--red);background:var(--red);color:#FBF6EC}
+.chip:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.day{text-align:center;line-height:1.3;min-width:72px}
+.day small{display:block;opacity:.8}
+label{display:block;font-weight:600;margin:0 0 4px}
+input{width:100%;font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:8px;padding:12px 14px;min-height:50px;margin-bottom:14px}
+input:focus,button:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.sum{background:var(--card);border-left:6px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0;margin-top:6px}
+.err{color:var(--red);font-weight:600;min-height:1.5em;margin:8px 0 0}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:2px solid var(--line);padding:10px 16px calc(10px + var(--safe-b));display:flex;gap:10px;max-width:100%}
+.btn{flex:1;font:inherit;font-weight:700;text-align:center;text-decoration:none;border-radius:10px;padding:14px;min-height:54px;cursor:pointer;border:2px solid var(--teal);color:var(--teal);background:transparent;display:flex;align-items:center;justify-content:center}
+.btn.main{background:var(--red);border-color:var(--red);color:#FBF6EC;flex:2}
+footer{max-width:640px;margin:40px auto 0;padding:0 20px;font-size:.8rem;opacity:.7}
+</style>
+</head>
+<body>
+<div class="pole" aria-hidden="true"></div>
+<header>
+  <h1>कटिंग सलुन</h1>
+  <p>समय बुक गर्नुहोस्। लाइन बस्नु पर्दैन।</p>
+</header>
+<main>
+  <section>
+    <h2>१. सेवा छान्नुहोस्</h2>
+    <div class="opts" id="services"></div>
+  </section>
+  <section>
+    <h2>२. दिन छान्नुहोस्</h2>
+    <div class="chips" id="days"></div>
+  </section>
+  <section>
+    <h2>३. समय छान्नुहोस्</h2>
+    <div class="chips" id="times"></div>
+  </section>
+  <section>
+    <h2>४. तपाईंको विवरण</h2>
+    <label for="name">नाम</label>
+    <input id="name" autocomplete="name" placeholder="तपाईंको नाम">
+    <label for="phone">फोन नम्बर</label>
+    <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="98XXXXXXXX">
+    <div class="sum" id="sum" aria-live="polite">सेवा, दिन र समय छान्नुहोस्।</div>
+    <p class="err" id="err" role="alert"></p>
+  </section>
+</main>
+<footer>built with ❤️ by 21.coders</footer>
+<div class="bar">
+  <a class="btn" id="call" href="#">फोन गर्नुहोस्</a>
+  <button class="btn main" id="book" type="button">WhatsApp मा बुक गर्नुहोस्</button>
+</div>
+<script>
+/* दुकानको विवरण यहाँ बदल्नुहोस् */
+var SHOP_PHONE = "9779800000000"; /* 977 + दुकानको नम्बर */
+var SHOP_NAME = "कटिंग सलुन";
+var SERVICES = [
+  {n:"कपाल काट्ने (Haircut)", p:200},
+  {n:"दाढी / सेभ", p:100},
+  {n:"कपाल + दाढी", p:280},
+  {n:"हेयर कलर", p:500},
+  {n:"बच्चाको कटिंग", p:150}
+];
+var OPEN = 9, CLOSE = 19; /* बिहान ९ देखि बेलुका ७ */
+
+var sel = {s:null, d:null, t:null};
+var $ = function(id){return document.getElementById(id)};
+var NE = ["०","१","२","३","४","५","६","७","८","९"];
+function ne(x){return String(x).replace(/\d/g,function(c){return NE[c]})}
+function pad(x){return x<10?"0"+x:""+x}
+function tlabel(h,m){var ap=h>=12?"बेलुका":"बिहान";var hh=h%12||12;return ne(hh)+":"+ne(pad(m))+" "+ap}
+
+function chipHandler(box,key){
+  box.addEventListener("click",function(e){
+    var b=e.target.closest("button");if(!b||b.disabled)return;
+    Array.prototype.forEach.call(box.children,function(c){c.setAttribute("aria-pressed","false")});
+    b.setAttribute("aria-pressed","true");sel[key]=+b.dataset.i;
+    if(key==="d")buildTimes();
+    summary();
+  });
+}
+
+SERVICES.forEach(function(s,i){
+  var b=document.createElement("button");b.className="opt";b.type="button";b.dataset.i=i;b.setAttribute("aria-pressed","false");
+  b.innerHTML="<b>"+s.n+"</b><span class='p'>रु "+ne(s.p)+"</span>";
+  $("services").appendChild(b);
+});
+chipHandler($("services"),"s");
+
+var days=[],now=new Date();
+for(var i=0;i<7;i++){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);days.push(d)}
+var WD=["आइतबार","सोमबार","मङ्गलबार","बुधबार","बिहीबार","शुक्रबार","शनिबार"];
+days.forEach(function(d,i){
+  var b=document.createElement("button");b.className="chip day";b.type="button";b.dataset.i=i;b.setAttribute("aria-pressed","false");
+  b.innerHTML=(i===0?"आज":i===1?"भोलि":WD[d.getDay()])+"<small>"+ne(d.getDate())+"/"+ne(d.getMonth()+1)+"</small>";
+  $("days").appendChild(b);
+});
+chipHandler($("days"),"d");
+
+var slots=[];
+for(var h=OPEN;h<CLOSE;h++){slots.push([h,0]);slots.push([h,30])}
+function buildTimes(){
+  var box=$("times");box.innerHTML="";sel.t=null;
+  slots.forEach(function(t,i){
+    var b=document.createElement("button");b.className="chip";b.type="button";b.dataset.i=i;b.setAttribute("aria-pressed","false");
+    b.textContent=tlabel(t[0],t[1]);
+    if(sel.d===0){var past=new Date(now.getFullYear(),now.getMonth(),now.getDate(),t[0],t[1]);if(past<=now)b.disabled=true}
+    box.appendChild(b);
+  });
+}
+chipHandler($("times"),"t");
+buildTimes();
+
+function summary(){
+  if(sel.s===null||sel.d===null||sel.t===null){$("sum").textContent="सेवा, दिन र समय छान्नुहोस्।";return}
+  var s=SERVICES[sel.s],d=days[sel.d],t=slots[sel.t];
+  $("sum").innerHTML="<b>"+s.n+"</b> – रु "+ne(s.p)+"<br>"+WD[d.getDay()]+", "+ne(d.getDate())+"/"+ne(d.getMonth()+1)+" – "+tlabel(t[0],t[1]);
+}
+
+try{var sv=JSON.parse(localStorage.getItem("cust")||"{}");if(sv.n)$("name").value=sv.n;if(sv.p)$("phone").value=sv.p}catch(e){}
+
+$("call").href="tel:+"+SHOP_PHONE;
+
+$("book").addEventListener("click",function(){
+  var n=$("name").value.trim(),p=$("phone").value.trim(),er=$("err");
+  if(sel.s===null){er.textContent="कृपया सेवा छान्नुहोस्।";return}
+  if(sel.d===null){er.textContent="कृपया दिन छान्नुहोस्।";return}
+  if(sel.t===null){er.textContent="कृपया समय छान्नुहोस्।";return}
+  if(!n){er.textContent="कृपया आफ्नो नाम लेख्नुहोस्।";$("name").focus();return}
+  if(p.replace(/\D/g,"").length<7){er.textContent="कृपया सही फोन नम्बर लेख्नुहोस्।";$("phone").focus();return}
+  er.textContent="";
+  try{localStorage.setItem("cust",JSON.stringify({n:n,p:p}))}catch(e){}
+  var s=SERVICES[sel.s],d=days[sel.d],t=slots[sel.t];
+  var msg="नमस्ते, म समय बुक गर्न चाहन्छु।\nनाम: "+n+"\nफोन: "+p+"\nसेवा: "+s.n+" (रु "+s.p+")\nदिन: "+pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear()+" ("+WD[d.getDay()]+")\nसमय: "+tlabel(t[0],t[1])+"\nकृपया पक्का गरिदिनुहोला।";
+  window.location.href="https://wa.me/"+SHOP_PHONE+"?text="+encodeURIComponent(msg);
+});
+</script>
+</body>
+</html>
